@@ -1,4 +1,4 @@
-# manualtracking-realtime
+# Manualtracking-realtime
 
 A real-time interactive visual effects project built with Python, MediaPipe, and OpenCV. It uses live hand landmark tracking to generate dynamic image surfaces that respond directly to hand movement, recreating the visual style commonly seen in the viral **#manualtracking** trend without frame-by-frame manual editing.
 
