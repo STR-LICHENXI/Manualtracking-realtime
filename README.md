@@ -4,15 +4,19 @@ A real-time interactive visual effects project built with Python, MediaPipe, and
 
 ## Project Background
 
-This project was inspired by the recent popularity of **#manualtracking** visual effects across Instagram, TikTok, Douyin, and other short-video platforms.
+This project started after I came across the recent **#manualtracking** trend on Instagram, Douyin/TikTok, WeChat Channels, Bilibili, and other short-video platforms.
 
-The project was inspired by the video of Instagram creator **[@wxll.hx](https://www.instagram.com/wxll.hx/)**, whose work combines real-time hand tracking with generative visual effects.
+At first, I assumed most of these effects were created through manual tracking, frame-by-frame editing, or motion graphics. That made me curious about whether a similar interaction could be reproduced directly in real time using computer vision.
 
-After seeing a large number of manual-tracking and editing-based recreations, this project explores a different implementation approach: rebuilding similar interactions from scratch using Python, MediaPipe, and OpenCV.
+I therefore started building a prototype from scratch with Python, MediaPipe, and OpenCV, using hand landmarks as control points for image deformation and interactive geometry.
 
-The current prototype tracks both hands in real time and uses hand landmarks as dynamic control points for image deformation, folding, and multi-surface visual effects.
+After the prototype was already working, I looked further into the original source of the visual style and found that Instagram creator **[@wxll.hx](https://www.instagram.com/wxll.hx/)** had also been using MediaPipe together with TouchDesigner for real-time interactive visuals.
 
-This repository is an independent implementation and does not use or redistribute the original creator's TouchDesigner project files.
+This changed the positioning of the project. Rather than presenting it as the first real-time version of the effect, this repository should be understood as an independent Python/OpenCV reimplementation inspired by the original interactive work and by the wider #manualtracking trend.
+
+The current prototype explores how similar real-time interactions can be implemented without TouchDesigner, using MediaPipe hand landmarks, lightweight geometry construction, and OpenCV-based texture mapping.
+
+This repository does not use or redistribute the original creator's TouchDesigner project files.
 
 ## System Architecture
 
@@ -20,8 +24,9 @@ The application runs from a standard webcam and uses MediaPipe Hand Landmarker t
 
 Each detected hand provides 21 landmark points. These landmarks are used to construct dynamic geometric surfaces, while OpenCV performs affine and perspective transformations to map image textures onto the generated geometry.
 
+## Interactive Effects
 
-The current prototype includes three modes.
+The current prototype includes three modes.、
 
 ### 1. 2D Foldable Surface
 
