@@ -50,7 +50,16 @@ The five resulting triangular surfaces form a closed fan-like structure that exp
 
 ## Demo
 
-A full demonstration video is added. Check out "Sample video" .
+A full demonstration video is available here:
+
+[View Sample Video](./Video%20sample/sample%20video.mp4)
+
+## Quick Start
+
+git clone https://github.com/STR-LICHENXI/Manualtracking-realtime.git
+cd Manualtracking-realtime
+pip install -r requirements.txt
+python app.py
 
 ## Tech Stack
 
