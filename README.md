@@ -6,7 +6,7 @@ This is a real-time interactive visual effects project built with Python, MediaP
 
 Basically I came across the recent **#manualtracking** trend on Instagram, Douyin/TikTok, WeChat Channels, Bilibili, and other short-video platforms.
 
-At first, I thought these effects were all created through frame-by-frame editing as most of them actually is. That made me curious about whether similar interactions could be reproduced directly in real time using computer vision.
+At first, I thought these effects were all created through frame-by-frame editing as most of them actually are. That made me curious about whether similar interactions could be reproduced directly in real time using computer vision.
 
 I therefore attempted to recreate the effect with Python, MediaPipe, and OpenCV, using hand landmarks as control points for image deformation and interactive geometry.
 
