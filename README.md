@@ -50,7 +50,7 @@ The five resulting triangular surfaces form a closed fan-like structure that exp
 
 ## Demo
 
-A full demonstration video and tutorial will be added soon.
+A full demonstration video is added. Check out "Sample video" .
 
 ## Tech Stack
 
