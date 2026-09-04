@@ -1,4 +1,18 @@
+import os
+import warnings
+
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
+os.environ["GLOG_minloglevel"] = "2"
+os.environ["ABSL_MIN_LOG_LEVEL"] = "2"
+
+warnings.filterwarnings("ignore")
+
 from pathlib import Path
+
+from absl import logging as absl_logging
+
+absl_logging.set_verbosity(absl_logging.ERROR)
+absl_logging.set_stderrthreshold(absl_logging.ERROR)
 
 import cv2
 import numpy as np
@@ -11,6 +25,12 @@ from interaction.effect_state import (
     EffectMode,
     EffectStateController,
 )
+
+
+try:
+    cv2.setLogLevel(2)
+except (AttributeError, TypeError):
+    pass
 
 
 ROOT = Path(__file__).resolve().parent
@@ -76,14 +96,18 @@ def draw_debug_hand(frame, hand):
             cv2.LINE_AA,
         )
 
-    for idx, p in enumerate(landmarks):
-        radius = 6 if idx in (4, 8, 12, 16, 20) else 3
+    for index, point in enumerate(landmarks):
+        radius = (
+            6
+            if index in (4, 8, 12, 16, 20)
+            else 3
+        )
 
         cv2.circle(
             frame,
             (
-                p["px"],
-                p["py"],
+                point["px"],
+                point["py"],
             ),
             radius,
             (255, 255, 255),
@@ -98,7 +122,9 @@ def draw_debug_shape(frame, shape):
 
     points = np.round(
         shape
-    ).astype(np.int32)
+    ).astype(
+        np.int32
+    )
 
     if len(points) >= 3:
         cv2.polylines(
@@ -116,21 +142,6 @@ def main():
         raise FileNotFoundError(
             f"Model not found: {MODEL_PATH}"
         )
-
-    print()
-    print("ManualTracking Realtime")
-    print()
-    print(f"2D    : {TEXTURE_2D_PATH.name}")
-    print(f"3D    : {TEXTURE_3D_PATH.name}")
-    print(f"Fan   : {TEXTURE_FAN_PATH.name}")
-    print()
-    print("D = Debug")
-    print("R = Reset")
-    print("2 = Force 2D")
-    print("3 = Force 3D")
-    print("4 = Force Fan")
-    print("Q / ESC = Quit")
-    print()
 
     tracker = HandTracker(
         model_path=str(MODEL_PATH),
@@ -160,33 +171,34 @@ def main():
     )
 
     state = EffectStateController(
-        long_hold_seconds=1.0,
-        touch_enter_ratio=0.45,
-        touch_exit_ratio=0.80,
-        first_touch_confirm_seconds=0.10,
+        long_hold_seconds=0.55,
+        touch_enter_ratio=0.72,
+        touch_exit_ratio=0.95,
+        first_touch_confirm_seconds=0.03,
+        visible_spread_ratio=1.45,
     )
 
-    cap = cv2.VideoCapture(
+    camera = cv2.VideoCapture(
         0,
         cv2.CAP_DSHOW,
     )
 
-    if not cap.isOpened():
-        cap = cv2.VideoCapture(0)
+    if not camera.isOpened():
+        camera = cv2.VideoCapture(0)
 
-    if not cap.isOpened():
+    if not camera.isOpened():
         tracker.close()
 
         raise RuntimeError(
             "Could not open camera."
         )
 
-    cap.set(
+    camera.set(
         cv2.CAP_PROP_FRAME_WIDTH,
         1280,
     )
 
-    cap.set(
+    camera.set(
         cv2.CAP_PROP_FRAME_HEIGHT,
         720,
     )
@@ -195,9 +207,9 @@ def main():
 
     try:
         while True:
-            ok, frame = cap.read()
+            success, frame = camera.read()
 
-            if not ok:
+            if not success:
                 break
 
             frame = cv2.flip(
@@ -215,34 +227,35 @@ def main():
 
             shape = None
 
-            if status["mode"] == EffectMode.TWO_D:
-                (
-                    frame,
-                    shape,
-                    _,
-                    _,
-                ) = flat_renderer.render(
-                    frame,
-                    hands,
-                )
+            if status["visible"]:
+                if status["mode"] == EffectMode.TWO_D:
+                    (
+                        frame,
+                        shape,
+                        _,
+                        _,
+                    ) = flat_renderer.render(
+                        frame,
+                        hands,
+                    )
 
-            elif status["mode"] == EffectMode.THREE_D:
-                (
-                    frame,
-                    shape,
-                ) = prism_renderer.render(
-                    frame,
-                    hands,
-                )
+                elif status["mode"] == EffectMode.THREE_D:
+                    (
+                        frame,
+                        shape,
+                    ) = prism_renderer.render(
+                        frame,
+                        hands,
+                    )
 
-            elif status["mode"] == EffectMode.FAN:
-                (
-                    frame,
-                    shape,
-                ) = fan_renderer.render(
-                    frame,
-                    hands,
-                )
+                elif status["mode"] == EffectMode.FAN:
+                    (
+                        frame,
+                        shape,
+                    ) = fan_renderer.render(
+                        frame,
+                        hands,
+                    )
 
             if show_debug:
                 for hand in hands:
@@ -271,24 +284,20 @@ def main():
 
             if key == ord("r"):
                 state.reset()
-                print("[ManualTracking] RESET")
 
             if key == ord("2"):
                 state.mode = EffectMode.TWO_D
                 state.has_opened_2d = True
-                print("[ManualTracking] FORCE -> 2D")
 
             if key == ord("3"):
                 state.mode = EffectMode.THREE_D
                 state.has_opened_3d = True
-                print("[ManualTracking] FORCE -> 3D")
 
             if key == ord("4"):
                 state.mode = EffectMode.FAN
-                print("[ManualTracking] FORCE -> FAN")
 
     finally:
-        cap.release()
+        camera.release()
         tracker.close()
         cv2.destroyAllWindows()
 
