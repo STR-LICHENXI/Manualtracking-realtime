@@ -55,21 +55,21 @@ A full demonstration video is available here:
 [View Sample Video](./Video%20sample/sample%20video.mp4)
 
 ## Quick Start
-
+```bash
 git clone https://github.com/STR-LICHENXI/Manualtracking-realtime.git
 cd Manualtracking-realtime
 pip install -r requirements.txt
 python app.py
+```
 
 ## Tech Stack
 
-```bash
 **Language:** Python  
 **Computer Vision:** MediaPipe Hand Landmarker  
 **Rendering:** OpenCV  
 **Core Libraries:** NumPy, MediaPipe, OpenCV  
 **Algorithms:** Hand Landmark Tracking, State Machine, Affine Transformation, Perspective Transformation, Alpha Blending, Dynamic Geometry Mapping
-```
+
 No custom neural network training is required. The project uses MediaPipe's pretrained hand landmark model as the real-time visual input layer.
 
 ## Inspiration
